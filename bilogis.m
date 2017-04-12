@@ -3,13 +3,20 @@ function xout=bilogis(xin,c_3,lo,hi,newlo,newhi)
 	%	        e^(c_3/2)-e^(-c_3*(x-1/2))
 	% f(x) =  ----------------------------------.
 	%     	(e^(c_3/2)-1)*(1+e^(-c_3*(x-1/2)))
+	%
+	%Author: Gene Harvey
 	
     switch nargin
-    case 4
-        newlo = lo;
-        newhi = hi;
-    case 5
-        error('Too many or too few arguments. Need either 4 or 6, you entered 5.')
+	    case 2
+			lo = min(xin);
+			hi = max(xin);
+			newlo = lo;
+			newhi = hi;
+	    case 4
+		   newlo = lo;
+		   newhi = hi;
+	    case 5
+		   error('Too many or too few arguments. Need either 4 or 6, you entered 5.')
     end
     
 	c_1 = (exp(c_3/2) + 1)/(exp(c_3/2) - 1);
