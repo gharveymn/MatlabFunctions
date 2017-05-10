@@ -3,12 +3,13 @@ function out = sptoeplitz(a,b,m,n)
 	%	Creates a sparse toeplitz matrix
 	%
 	%	Input options:
-	%		sptoep(b)
-	%		sptoep(a,b)
-	%		sptoep(b,n)
-	%		sptoep(b,m,n)
-	%		sptoep(a,b,n)
-	%		sptoep(a,b,m,n)
+	%		sptoeplitz(b)
+	%		sptoeplitz(a,b)
+	%		sptoeplitz(b,n)
+	%		sptoeplitz(b,m,n)
+	%		sptoeplitz(a,b,n)
+	%		sptoeplitz(a,b,m,n)
+	%
 	
 	switch nargin
 		case 1
