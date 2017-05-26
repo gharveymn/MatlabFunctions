@@ -3,8 +3,8 @@ function bih = biharmonic2(xsz,ysz,h)
 	%xsz		number of x values in the grid
 	%ysz		number of y values in the grid
 	
-	Dxx = sptoeplitz([2 -1],xsz)./h.^2;
-	Dyy = sptoeplitz([2 -1],ysz)./h.^2;
+	Dxx = sptoeplitz([-2 1],xsz)./h.^2;
+	Dyy = sptoeplitz([-2 1],ysz)./h.^2;
 	Cx = sparse([1,xsz],[1,xsz],[(2/h^4),(2/h^4)],xsz,xsz);
 	Cy = sparse([1,ysz],[1,ysz],[(2/h^4),(2/h^4)],ysz,ysz);
 	

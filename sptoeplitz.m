@@ -37,7 +37,7 @@ function out = sptoeplitz(a,b,m,n)
 	end
 	
 	if(a(1)~=b(1))
-		warning(['First element of input column does not match first element of input row.\n'...,
+		warning(['First element of input column does not match first element of input row. '...,
 				'Column wins diagonal conflict.']);
 	end
 	
@@ -53,59 +53,74 @@ function out = sptoeplitz(a,b,m,n)
 	
 	szI = numel(belowDia);
 	szJ = numel(aboveDia);
-			
-	ii = cell(1,szI);
-	ij = cell(1,szI);
-	iv = cell(1,szI);
 	
-	ji = cell(1,szJ);
-	jj = cell(1,szJ);
-	jv = cell(1,szI);
+	upto = min(m,n);
 	
-	upto = min(n,m);
+	%inner block
+	irJ = upto*min(szJ,max(n-m,0));
+	irI = upto*min(szI,max(m-n,0));
+	
+	%outer block
+	itJ = max(szJ-irJ,0);
+	itI = max(szI-irI,0);
+	reJ = upto*itJ - sum(0:itJ);
+	reI = upto*itI - sum(0:itI);
+	num = irJ+irI+reJ+reI+upto;
+	
+	i = zeros(num,1);
+	j = zeros(num,1);
+	v = zeros(num,1);
+	
+	idx = 1;
 	
 	if(m < n)
 		for k=1:szI
-			ii{k} = (k+1:m)';
-			ij{k} = (1:m-k)';
-			iv{k} = belowDia(k).*ones(m-k,1);
+			i(idx:idx+m-k-1) = (k+1:m)';
+			j(idx:idx+m-k-1) = (1:m-k)';
+			v(idx:idx+m-k-1) = belowDia(k);
+			idx = idx+m-k;
 		end
 		
 		for k=1:min(n-m,szJ)
-			ji{k} = (1:m)';
-			jj{k} = (k+1:m+k)';
-			jv{k} = aboveDia(k).*ones(m,1);
+			i(idx:idx+m-1) = (1:m)';
+			j(idx:idx+m-1) = (k+1:m+k)';
+			v(idx:idx+m-1) = aboveDia(k);
+			idx = idx+m;
 		end
 
 		for k=n-m+1:szJ
-			ji{k} = (1:n-k)';
-			jj{k} = (k+1:n)';
-			jv{k} = aboveDia(k).*ones(n-k,1);
+			i(idx:idx+n-k-1) = (1:n-k)';
+			j(idx:idx+n-k-1) = (k+1:n)';
+			v(idx:idx+n-k-1) = aboveDia(k);
+			idx=idx+n-k;
 		end
 	else
 		
 		for k=1:min(m-n,szI)
-			ii{k} = (k+1:n+k)';
-			ij{k} = (1:n)';
-			iv{k} = belowDia(k).*ones(n,1);
+			i(idx:idx+n-1) = (k+1:n+k)';
+			j(idx:idx+n-1) = (1:n)';
+			v(idx:idx+n-1) = belowDia(k);
+			idx = idx+n;
 		end
 		
 		for k=m-n+1:szI
-			ii{k} = (k+1:m)';
-			ij{k} = (1:m-k)';
-			iv{k} = belowDia(k).*ones(m-k,1);
+			i(idx:idx+m-k-1) = (k+1:m)';
+			j(idx:idx+m-k-1) = (1:m-k)';
+			v(idx:idx+m-k-1) = belowDia(k);
+			idx = idx+m-k;
 		end
 
 		for k=1:szJ
-			ji{k} = (1:n-k)';
-			jj{k} = (k+1:n)';
-			jv{k} = aboveDia(k).*ones(n-k,1);
+			i(idx:idx+n-k-1) = (1:n-k)';
+			j(idx:idx+n-k-1) = (k+1:n)';
+			v(idx:idx+n-k-1) = aboveDia(k);
+			idx = idx+n-k;
 		end
 	end
-		
-	i = vertcat(ii{:},ji{:},(1:upto)');
-	j = vertcat(ij{:},jj{:},(1:upto)');
-	v = vertcat(iv{:},jv{:},dia.*ones(upto,1));
+	
+	i(idx:end) = (1:upto)';
+	j(idx:end) = (1:upto)';
+	v(idx:end) = dia;
 	
 	out = sparse(i,j,v,m,n);
 	
