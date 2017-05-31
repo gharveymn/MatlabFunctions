@@ -1,0 +1,1 @@
+All functions in these subfolders were not originally written by me. All appropriate licenses should be included.

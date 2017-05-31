@@ -1,5 +1,5 @@
 function laplacian = laplacian2(xsz,ysz,h,neumann)
-	% LAPLACIANFACTORY
+	% LAPLACIAN2
 	%	Produces a sparse nmxnm Laplacian operating on a discrete distribution with spacing h.
 	%	This is for form v = [... v_{i,j} v_{i+1,j} v_{i+2,j} ...].
      

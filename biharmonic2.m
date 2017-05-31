@@ -5,8 +5,8 @@ function bih = biharmonic2(xsz,ysz,h)
 	
 	Dxx = sptoeplitz([-2 1],xsz)./h.^2;
 	Dyy = sptoeplitz([-2 1],ysz)./h.^2;
-	Cx = sparse([1,xsz],[1,xsz],[(1/h^4),(1/h^4)],xsz,xsz);
-	Cy = sparse([1,ysz],[1,ysz],[(1/h^4),(1/h^4)],ysz,ysz);
+	Cx = sparse([1,xsz],[1,xsz],[(2/h^4),(2/h^4)],xsz,xsz);
+	Cy = sparse([1,ysz],[1,ysz],[(2/h^4),(2/h^4)],ysz,ysz);
 	
 	Dx4 = kron(speye(ysz),Dxx^2);
 	Dy4 = kron(Dyy^2,speye(xsz));
