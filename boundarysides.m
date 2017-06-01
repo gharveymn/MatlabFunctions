@@ -1,4 +1,4 @@
-function [bcw,bce,bcs,bcn,bcc] = boundarysides(xmeshfull,ymeshfull,onfull,valind,nx)
+function [bc,bcfull] = boundarysides(xmeshfull,ymeshfull,onfull,valind,nx)
 	%GETWHEREBOUNDARIES I'm somewhat suprised this actually works
 	
 	xmin = min(xmeshfull);
@@ -43,11 +43,15 @@ function [bcw,bce,bcs,bcn,bcc] = boundarysides(xmeshfull,ymeshfull,onfull,valind
 	bcn = bcn|bcci;
 	bcc = bcc|bcci;
 	
+	bcfull = {bcw,bce,bcs,bcn,bcc};
+	
 	%wipe out invalid indices
 	bcw = bcw(valind);
 	bce = bce(valind);
 	bcs = bcs(valind);
 	bcn = bcn(valind);
 	bcc = bcc(valind);
+	
+	bc = {bcw,bce,bcs,bcn,bcc};
 end
 
