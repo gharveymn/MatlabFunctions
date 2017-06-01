@@ -29,7 +29,7 @@ function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onful
 	bce = bcfull{2};
 	bcs = bcfull{3};
 	bcn = bcfull{4};
-	bcc = bcfull{5};	
+	bcc = bcfull{5};
 	
 	
 	xmax = max(xmeshfull);
@@ -147,6 +147,10 @@ function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onful
 		clomeshfull = onfullnew;
 		
 	elseif(strcmp(side,'inner'))
+		%returns smaller size
+		
+		%clomeshfull should be wrt the original mesh
+		%everything else should be converted to the smaller size
 		
 		% how much to increase the grid size in NSEW directions
 		incw = ~isempty(xmeshfull(xmeshfull==xmin & valind));
@@ -168,6 +172,30 @@ function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onful
 		yminnew = ymin;
 		ymaxnew = ymax;
 		
+		if(incw)
+			xminnew = xmin + h;
+			%Xmeshnew = horzcat(xminnew*ones(ny,1),Xmeshnew);
+			%Ymeshnew = horzcat(Ymeshnew(:,1),Ymeshnew);
+		end
+		
+		if(incn)
+			xmaxnew = xmax - h;
+			%Xmeshnew = horzcat(Xmeshnew,xmaxnew*ones(ny,1));
+			%Ymeshnew = horzcat(Ymeshnew,Ymeshnew(:,end));
+		end
+		
+		if(incs)
+			yminnew = ymin + h;
+			%Xmeshnew = vertcat(Xmeshnew(1,:),Xmeshnew);
+			%Ymeshnew = vertcat(yminnew*ones(1,nx),Ymeshnew);
+		end
+		
+		if(incn)
+			ymaxnew = ymax - h;
+			%Xmeshnew = vertcat(Xmeshnew,Xmeshnew(end,:));
+			%Ymeshnew = vertcat(Ymeshnew,ymaxnew*ones(1,nx));
+		end
+		
 		i1 = 1+incs;
 		i2 = i1+ny-1;
 		j1 = 1+incw;
@@ -183,7 +211,8 @@ function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onful
 		Bcs = newmat;
 		Bcn = newmat;
 		Bcc = newmat;
-		Smallmatinds = logical(newmat);
+		Smallmatinds = newmat;
+		Innermatinds = newmat;
 		
 		Xmeshnew(i1:i2,j1:j2) = reshape(xmeshfull,[nx,ny])';
 		Ymeshnew(i1:i2,j1:j2) = reshape(ymeshfull,[nx,ny])';
@@ -196,6 +225,16 @@ function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onful
 		Bcc(i1:i2,j1:j2) = reshape(bcc,[nx,ny])';
 		Smallmatinds(i1:i2,j1:j2) = ones(ny,nx);
 		
+		nxnew = nx - incw - ince;
+		nynew = ny - incn - incs;
+		
+		i1 = i1+incs;
+		i2 = i1+nynew;
+		j1 = j1+incw;
+		j2 = j1+nxnew;
+		
+		Innermatinds(i1:i2,j1:j2) = ones(nynew,nxnew);
+		
 		Clomeshfull = Clomeshfull | circshift(Bcw,1,2) | circshift(Bce,-1,2) | circshift(Bcs,1) | circshift(Bcn,-1);
 		
 		Clomeshfull = Clomeshfull | circshift(circshift(Bcc,1),1,2)...
@@ -205,14 +244,17 @@ function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onful
 		
 		%& Valindnew wipes out shifted indices which are outside the polgon
 		Clomeshfull = Clomeshfull & Valindnew & ~Onfullnew;
+		Onmeshfull = Clomeshfull;
 		
 		Xmeshnew = Xmeshnew./Valindnew;
 		Ymeshnew = Ymeshnew./Valindnew;
 		
 		Clomeshfull = reshape(Clomeshfull(Smallmatinds),[ny,nx]);
-		Valindnew = reshape(Valindnew(Smallmatinds),[ny,nx]);
-		Xmeshnew = reshape(Xmeshnew(Smallmatinds),[ny,nx]);
-		Ymeshnew = reshape(Ymeshnew(Smallmatinds),[ny,nx]);
+		Valindnew = reshape(Valindnew(Innermatinds),[ny,nx]);
+		Xmeshnew = reshape(Xmeshnew(Innermatinds),[ny,nx]);
+		Ymeshnew = reshape(Ymeshnew(Innermatinds),[ny,nx]);
+		
+		clomeshfull = reshape(Clomeshfull',[nx*ny,1]);
 		
 		xinitnew = (xminnew:h:xmaxnew)';
 		yinitnew = (yminnew:h:ymaxnew)';
@@ -223,9 +265,9 @@ function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onful
 		xmeshfullnew = kron(ones(nynew,1),xinitnew);
 		ymeshfullnew = kron(yinitnew,ones(nxnew,1));
 		
-		onfullnew = reshape(Clomeshfull',[nxnew*nynew,1]);
+		onfullnew = reshape(Onmeshfull',[nxnew*nynew,1]);
 		
-		Valindnew = Valindnew | Clomeshfull;
+		Valindnew = Valindnew | Onmeshfull;
 		valindnew = reshape(Valindnew',[nxnew*nynew,1]);
 		
 		filterMatnew = spdiag(valindnew);
@@ -238,8 +280,6 @@ function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onful
 		
 		gridsnew = {xinitnew,yinitnew,xmeshnew,ymeshnew,Xmeshnew,Ymeshnew,xmeshfullnew,ymeshfullnew};
 		filteringnew = {filterMatnew,valindnew,onnew,onfullnew};
-		
-		clomeshfull = onfullnew;
 		
 	else
 		ME = MException('closure:invalidParameterException','Invalid value for side');
