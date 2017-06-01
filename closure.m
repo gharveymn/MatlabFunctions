@@ -1,4 +1,4 @@
-function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onfull,valind,nx,ny,h,side)
+function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onfull,valind,nx,ny,h,side,gp)
 	%CLOSURE surrounds the input grid with a closure
 	% expects vector containing x coordinates and vector containing y coordinates of form
 	% 11,21,31,41,12,22,32,42,etc.
@@ -46,6 +46,7 @@ function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onful
 		incn = ~isempty(ymeshfull(ymeshfull==ymax & valind));
 		
 		newmat = zeros(ny+incs+incn,nx+incw+ince);
+		newmatl = logical(newmat);
 		
 		%Xmeshnew = reshape(xmeshfull,[nx,ny])';
 		%Ymeshnew = reshape(ymeshfull,[nx,ny])';
@@ -90,32 +91,34 @@ function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onful
 		
 		Xmeshnew = newmat;
 		Ymeshnew = newmat;
-		Onfullnew = newmat;
-		Valindnew = newmat;
-		Bcw = newmat;
-		Bce = newmat;
-		Bcs = newmat;
-		Bcn = newmat;
-		Bcc = newmat;
+		Clomeshfull = newmatl;
+		Onfullnew = newmatl;
+		Valindnew = newmatl;
+		Bcw = newmatl;
+		Bce = newmatl;
+		Bcs = newmatl;
+		Bcn = newmatl;
+		Bcc = newmatl;
 		
 		Xmeshnew(i1:i2,j1:j2) = reshape(xmeshfull,[nx,ny])';
 		Ymeshnew(i1:i2,j1:j2) = reshape(ymeshfull,[nx,ny])';
 		Valindnew(i1:i2,j1:j2) = Valind;
+		Onfullnew(i1:i2,j1:j2) = reshape(onfull,[nx,ny])';
 		Bcw(i1:i2,j1:j2) = reshape(bcw,[nx,ny])';
 		Bce(i1:i2,j1:j2) = reshape(bce,[nx,ny])';
 		Bcs(i1:i2,j1:j2) = reshape(bcs,[nx,ny])';
 		Bcn(i1:i2,j1:j2) = reshape(bcn,[nx,ny])';
 		Bcc(i1:i2,j1:j2) = reshape(bcc,[nx,ny])';
 		
-		Onfullnew = Onfullnew | circshift(Bcw,-1,2) | circshift(Bce,1,2) | circshift(Bcs,-1) | circshift(Bcn,1);
+		Clomeshfull = Clomeshfull | circshift(Bcw,-1,2) | circshift(Bce,1,2) | circshift(Bcs,-1) | circshift(Bcn,1);
 		
-		Onfullnew = Onfullnew | circshift(circshift(Bcc,1),1,2)...
+		Clomeshfull = Clomeshfull | circshift(circshift(Bcc,1),1,2)...
 			| circshift(circshift(Bcc,1),-1,2)...
 			| circshift(circshift(Bcc,-1),1,2)...
 			| circshift(circshift(Bcc,-1),-1,2);
 		
 		%& ~Valindnew wipes out shifted indices which are inside the polgon
-		Onfullnew = Onfullnew & ~Valindnew;
+		Clomeshfull = Clomeshfull & ~Valindnew;
 		
 		Xmeshnew = Xmeshnew./Valindnew;
 		Ymeshnew = Ymeshnew./Valindnew;
@@ -129,9 +132,10 @@ function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onful
 		xmeshfullnew = kron(ones(nynew,1),xinitnew);
 		ymeshfullnew = kron(yinitnew,ones(nxnew,1));
 		
+		clomeshfull = reshape(Clomeshfull',[nxnew*nynew,1]);
 		onfullnew = reshape(Onfullnew',[nxnew*nynew,1]);
 		
-		Valindnew = Valindnew | Onfullnew;
+		Valindnew = Valindnew | Clomeshfull;
 		valindnew = reshape(Valindnew',[nxnew*nynew,1]);
 		
 		filterMatnew = spdiag(valindnew);
@@ -143,8 +147,14 @@ function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onful
 		onnew = onfullnew(valindnew);
 		
 		gridsnew = {xinitnew,yinitnew,xmeshnew,ymeshnew,Xmeshnew,Ymeshnew,xmeshfullnew,ymeshfullnew};
-		filteringnew = {filterMatnew,valindnew,onnew,onfullnew};
-		clomeshfull = onfullnew;
+		
+		if(exist('gp','var'))
+			Gp = newmatl;
+			Gp(i1:i2,j1:j2) = reshape(gp,[nx,ny])';
+			filteringnew = {filterMatnew,valindnew,onnew,onfullnew,reshape(Gp',[nxnew*nynew,1])};
+		else
+			filteringnew = {filterMatnew,valindnew,onnew,onfullnew};
+		end
 		
 	elseif(strcmp(side,'inner'))
 		%returns smaller size
@@ -159,6 +169,7 @@ function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onful
 		incn = ~isempty(ymeshfull(ymeshfull==ymax & valind));
 		
 		newmat = zeros(ny+incs+incn,nx+incw+ince);
+		newmatl = logical(newmat);
 		
 		%Xmeshnew = reshape(xmeshfull,[nx,ny])';
 		%Ymeshnew = reshape(ymeshfull,[nx,ny])';
@@ -203,16 +214,16 @@ function [clomeshfull,gridsnew,filteringnew] = closure(xmeshfull,ymeshfull,onful
 		
 		Xmeshnew = newmat;
 		Ymeshnew = newmat;
-		Clomeshfull = newmat;
-		Valindnew = newmat;
-		Onfullnew = newmat;
-		Bcw = newmat;
-		Bce = newmat;
-		Bcs = newmat;
-		Bcn = newmat;
-		Bcc = newmat;
-		Smallmatinds = newmat;
-		Innermatinds = newmat;
+		Clomeshfull = newmatl;
+		Valindnew = newmatl;
+		Onfullnew = newmatl;
+		Bcw = newmatl;
+		Bce = newmatl;
+		Bcs = newmatl;
+		Bcn = newmatl;
+		Bcc = newmatl;
+		Smallmatinds = newmatl;
+		Innermatinds = newmatl;
 		
 		Xmeshnew(i1:i2,j1:j2) = reshape(xmeshfull,[nx,ny])';
 		Ymeshnew(i1:i2,j1:j2) = reshape(ymeshfull,[nx,ny])';
