@@ -44,7 +44,7 @@ function [clomeshfull,gridsnew,filteringnew,ret] = closure(grids,filtering,h,sid
 	
 	if(strcmp(side,'outer'))
 		
-		[bc,bcfull] = boundarysides(xmeshfull,ymeshfull,gp,valindouter,nx);
+		[bc,bcfull] = boundarysides(grids,filtering,gp,'outer');
 		bcw = bcfull{1};
 		bce = bcfull{2};
 		bcs = bcfull{3};
