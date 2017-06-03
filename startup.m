@@ -1,0 +1,6 @@
+set(groot,'defaultSurfaceEdgeColor','none')
+set(groot,'defaultSurfaceFaceColor','interp')
+set(groot,'defaultFunctionSurfaceEdgeColor','none')
+set(groot,'defaultFunctionSurfaceFaceColor','interp')
+set(groot,'defaultScatterMarker','.')
+set(groot,'defaultScatterCData',[1 0 0])
