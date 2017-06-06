@@ -13,12 +13,12 @@ function bih = biharmonic2(xsz,ysz,h,bcx,bcy)
 	Dx2y2 = kron(Dxx,Dyy);
 	
 	if(exist('bcx','var'))
-		Dx4 = ~bcx.*Dx4 + diag(bcx);
+		Dx4 = ~bcx.*Dx4 + spdiag(bcx);
 		Dx2y2 = ~bcx.*Dx4;
 	end
 	
 	if(exist('bcy','var'))
-		Dy4 = ~bcy.*Dy4 + diag(bcy);
+		Dy4 = ~bcy.*Dy4 + spdiag(bcy);
 		Dx2y2 = ~bcy.*Dy4;
 	end
 	

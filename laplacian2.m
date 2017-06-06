@@ -46,11 +46,11 @@ function laplacian = laplacian2(xsz,ysz,h,order,neumann,bcx,bcy)
 	Dyy = kron(dy2,speye(xsz));
 	
 	if(exist('bcx','var'))
-		Dxx = ~bcx.*Dxx + diag(bcx);
+		Dxx = ~bcx.*Dxx + spdiag(bcx);
 	end
 	
 	if(exist('bcy','var'))
-		Dyy = ~bcy.*Dyy + diag(bcy);
+		Dyy = ~bcy.*Dyy + spdiag(bcy);
 	end
 	
 	laplacian = Dxx+Dyy;
