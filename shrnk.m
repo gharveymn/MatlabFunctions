@@ -1,5 +1,5 @@
-function A = shrink(M,order)
-	%SHRINK take off the sides
+function A = shrnk(M,order)
+	%SHRNK take off the sides
 	if(nargin == 2)
 		A = M(1+order:end-order,1+order:end-order);
 	else
