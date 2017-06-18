@@ -1,4 +1,4 @@
-function laplacian = laplacian2(xsz,ysz,h,order,neumann,bcx,bcy)
+function laplacian = laplacian2(xsz,ysz,h,order,neumann,bcx,bcy,posneg)
 	% LAPLACIAN2
 	%	Produces a sparse nmxnm Laplacian operating on a discrete distribution with spacing h.
 	%	This is for form v = [... v_{i,j} v_{i+1,j} v_{i+2,j} ...].
@@ -38,19 +38,29 @@ function laplacian = laplacian2(xsz,ysz,h,order,neumann,bcx,bcy)
 			otherwise
 				ME = MException('laplacian2:invalidParameterException','invalid value for case');
 				throw(ME)
-			end
-				
+		end
 	end
 	
-	Dxx = kron(speye(ysz),dx2);
-	Dyy = kron(dy2,speye(xsz));
+	if(exist('posneg','var') && posneg == -1)
+		Dxx = -kron(speye(ysz),dx2);
+		Dyy = -kron(dy2,speye(xsz));
+	else
+		Dxx = kron(speye(ysz),dx2);
+		Dyy = kron(dy2,speye(xsz));
+	end
 	
-	if(exist('bcx','var'))
+	if(exist('bcx','var') && ~isempty(bcx))
 		Dxx = spdiag(~bcx)*Dxx + spdiag(bcx);
 	end
 	
-	if(exist('bcy','var'))
+	if(exist('bcy','var') && ~isempty(bcy))
 		Dyy = spdiag(~bcy)*Dyy + spdiag(bcy);
+	end
+	
+	%make sure we don't double add
+	if(exist('bcx','var') && exist('bcy','var') && ~(isempty(bcx)||isempty(bcy)))
+		Dxx = spdiag(~(bcx&bcy))*Dxy + 0.5*spdiag(bcx&bcy);
+		Dyy = spdiag(~(bcx&bcy))*Dyy + 0.5*spdiag(bcx&bcy);
 	end
 	
 	laplacian = Dxx+Dyy;
