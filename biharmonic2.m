@@ -9,12 +9,12 @@ function bih = biharmonic2(nx,ny,h,bcxd,bcyd,bcxn,bcyn,posneg)
 	Cy = sparse([1,ny],[1,ny],[(2/h^4),(2/h^4)],ny,ny);
 	
 	if(exist('posneg','var') && posneg == -1)
-		Dx4 = -(kron(speye(ysz),Dxx^2) + kron(speye(ysz),Cx));
-		Dy4 = -(kron(Dyy^2,speye(xsz)) + kron(Cy,speye(xsz)));
+		Dx4 = -(kron(speye(ny),Dxx^2) + kron(speye(ny),Cx));
+		Dy4 = -(kron(Dyy^2,speye(nx)) + kron(Cy,speye(nx)));
 		Dx2y2 = -kron(Dyy,Dxx);
 	else
-		Dx4 = kron(speye(ysz),Dxx^2) + kron(speye(ysz),Cx);
-		Dy4 = kron(Dyy^2,speye(xsz)) + kron(Cy,speye(xsz));
+		Dx4 = kron(speye(ny),Dxx^2) + kron(speye(ny),Cx);
+		Dy4 = kron(Dyy^2,speye(nx)) + kron(Cy,speye(nx));
 		Dx2y2 = kron(Dyy,Dxx);
 	end
 	
