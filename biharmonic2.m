@@ -45,7 +45,7 @@ function bih = biharmonic2(nx,ny,h,bcxd,bcyd,bcxn,bcyn,posneg)
 		dx = kron(speye(ny),Dx);
 		dx = spdiag(bcxn)*dx;
 		
-		Dx4 = spdiag(~bcxn)*Dx4 + 1000*dx;
+		Dx4 = spdiag(~bcxn)*Dx4 + dx;
 		Dx2y2 = spdiag(~bcxn)*Dx2y2;
 		Dy4 = spdiag(~bcxn)*Dy4;
 	end
@@ -55,7 +55,7 @@ function bih = biharmonic2(nx,ny,h,bcxd,bcyd,bcxn,bcyn,posneg)
 		dy = kron(Dy,speye(nx));
 		dy = spdiag(bcyn)*dy;
 		
-		Dy4 = spdiag(~bcyn)*Dy4 + 1000*dy;
+		Dy4 = spdiag(~bcyn)*Dy4 + dy;
 		Dx2y2 = spdiag(~bcyn)*Dx2y2;
 		Dx4 = spdiag(~bcyn)*Dx4;
 	end
