@@ -175,10 +175,10 @@ for k = 1:nc         % Loop through edges
       % test. Take shortcuts wherever possible!
 
       Y = y(j);   % Do the array look-up once & make a temp scalar
-      if Y<=y2
+      if Y<y2 || abs(Y-y2)<tol
          X = x(j);   % Do the array look-up once & make a temp scalar
-         if X>=xmin
-            if X<=xmax
+         if X>xmin || abs(X-xmin)<tol
+            if X<xmax  || abs(X-xmax)<tol
 
                % Check if we're "on" the edge
                on(j) = on(j) || (abs((y2-Y)*(x1-X)-(y1-Y)*(x2-X))<tol);

@@ -25,11 +25,11 @@ function laplacian = laplacian2(nx,ny,h,a11x,a11y,a11io,order,bcwe,bcsn,bcio,pos
 	
 	switch order
 		case 1
-			dx2 = sptoeplitz([-2 1],nx)./h.^2;
-			dy2 = sptoeplitz([-2 1],ny)./h.^2;
+			dx2 = sptoeplitz([-2 1],nx);
+			dy2 = sptoeplitz([-2 1],ny);
 		case 4
-			dx2 = sptoeplitz([-30 16 -1],nx)./(12*h.^2);
-			dy2 = sptoeplitz([-30 16 -1],ny)./(12*h.^2);
+			dx2 = sptoeplitz([-30 16 -1],nx)./12;
+			dy2 = sptoeplitz([-30 16 -1],ny)./12;
 		otherwise
 			ME = MException('laplacian2:invalidParameterException','invalid value for case');
 			throw(ME)
@@ -38,18 +38,18 @@ function laplacian = laplacian2(nx,ny,h,a11x,a11y,a11io,order,bcwe,bcsn,bcio,pos
 	if(exist('posneg','var') && posneg == -1)
 		Dxx = -kron(speye(ny),dx2);
 		Dyy = -kron(dy2,speye(nx));
-		Dxx(bcwe,bcwe) = a11x;
-		Dyy(bcsn,bcsn) = a11y;
-		Dxx(bcio,bcio) = a11io;
+		Dxx(spdiag(bcwe)) = a11x;
+		Dyy(spdiag(bcsn)) = a11y;
+		Dxx(spdiag(bcio)) = a11io;
 	else
 		Dxx = kron(speye(ny),dx2);
 		Dyy = kron(dy2,speye(nx));
-		Dxx(bcwe,bcwe) = -a11x;
-		Dyy(bcsn,bcsn) = -a11y;
-		Dxx(bcio,bcio) = -a11io;
+		Dxx(spdiag(bcwe)) = -a11x;
+		Dyy(spdiag(bcsn)) = -a11y;
+		Dxx(spdiag(bcio)) = -a11io;
 	end
 	
-	laplacian = Dxx+Dyy;
+	laplacian = (Dxx+Dyy)./h.^2;
 	
 end
 	
