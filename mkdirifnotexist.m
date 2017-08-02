@@ -1,4 +1,4 @@
 function mkdirifnotexist(dirpath)
-    if dirpath(end) ~= '/', dirpath = [dirpath '/']; end
+    if dirpath(end) ~= filesep, dirpath = [dirpath filesep]; end
     if (~exist(dirpath, 'dir')), mkdir(dirpath); end
 end

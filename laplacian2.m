@@ -1,4 +1,4 @@
-function laplacian = laplacian2(nx,ny,h,a11x,a11y,a11io,order,bcwe,bcsn,bcio,posneg)
+function laplacian = laplacian2(nx,ny,hx,hy,a11x,a11y,a11io,order,bcwe,bcsn,bcio,posneg)
 	% LAPLACIAN2
 	%	Produces a sparse nmxnm Laplacian operating on a discrete distribution with spacing h.
 	%	This is for form v = [... v_{i,j} v_{i+1,j} v_{i+2,j} ...].
@@ -49,7 +49,7 @@ function laplacian = laplacian2(nx,ny,h,a11x,a11y,a11io,order,bcwe,bcsn,bcio,pos
 		Dxx(spdiag(bcio)) = -a11io;
 	end
 	
-	laplacian = (Dxx+Dyy)./h.^2;
+	laplacian = Dxx/hx^2+Dyy/hy^2;
 	
 end
 	
