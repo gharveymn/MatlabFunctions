@@ -1,7 +1,8 @@
 function array = dpqs(array)
 	%DPQS Implements a dual pivot quick sort
 	
-	array = DPQSWorker(array,1,numel(array));
+	array = dpqs_mex(array);
+	%array = DPQSWorker(array,1,numel(array));
 	
 end
 
