@@ -1,4 +1,4 @@
-function laplacian = laplacian2(nx,ny,hx,hy,a11x,a11y,a11io,order,bcwe,bcsn,bcio,posneg)
+function laplacian = laplacian2(nx,ny,hx,hy,order,posneg,bcpar)
 	% LAPLACIAN2
 	%	Produces a sparse nmxnm Laplacian operating on a discrete distribution with spacing h.
 	%	This is for form v = [... v_{i,j} v_{i+1,j} v_{i+2,j} ...].
@@ -9,6 +9,10 @@ function laplacian = laplacian2(nx,ny,hx,hy,a11x,a11y,a11io,order,bcwe,bcsn,bcio
 	
 	if(~exist('order','var') || isempty(order))
 		order = 1;
+	end
+	
+	if(~exist('posneg','var'))
+		posneg = 1;
 	end
 	
 	if(a11x > 3 || a11x < 1)
@@ -35,18 +39,17 @@ function laplacian = laplacian2(nx,ny,hx,hy,a11x,a11y,a11io,order,bcwe,bcsn,bcio
 			throw(ME)
 	end
 	
-	if(exist('posneg','var') && posneg == -1)
-		Dxx = -kron(speye(ny),dx2);
-		Dyy = -kron(dy2,speye(nx));
-		Dxx(spdiag(bcwe)) = a11x;
-		Dyy(spdiag(bcsn)) = a11y;
-		Dxx(spdiag(bcio)) = a11io;
-	else
-		Dxx = kron(speye(ny),dx2);
-		Dyy = kron(dy2,speye(nx));
-		Dxx(spdiag(bcwe)) = -a11x;
-		Dyy(spdiag(bcsn)) = -a11y;
-		Dxx(spdiag(bcio)) = -a11io;
+	Dxx = posneg*kron(speye(ny),dx2);
+	Dyy = posneg*kron(dy2,speye(nx));
+	if(exist('bcpar','var') && ~isempty(a11x))
+		Dxx(spdiag(bcpar.we.inds)) = -posneg*bcpar.we.a11.x;
+		Dyy(spdiag(bcpar.we.inds)) = -posneg*bcpar.we.a11.y;
+
+		Dxx(spdiag(bcpar.sn.inds)) = -posneg*bcpar.sn.a11.x;
+		Dyy(spdiag(bcpar.sn.inds)) = -posneg*bcpar.sn.a11.y;
+
+		Dxx(spdiag(bcpar.io.inds)) = -posneg*bcpar.io.a11.x;
+		Dyy(spdiag(bcpar.io.inds)) = -posneg*bcpar.io.a11.y;
 	end
 	
 	laplacian = Dxx/hx^2+Dyy/hy^2;
