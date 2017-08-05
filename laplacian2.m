@@ -13,19 +13,7 @@ function laplacian = laplacian2(nx,ny,hx,hy,order,posneg,bcpar)
 	
 	if(~exist('posneg','var'))
 		posneg = 1;
-	end
-	
-	if(a11x > 3 || a11x < 1)
-		ME = MException('laplacian2:invalidParameterException','Invalid value for a11');
-		throw(ME)
-	end
-	
-	if(a11y > 3 || a11y < 1)
-		ME = MException('laplacian2:invalidParameterException','Invalid value for a11');
-		throw(ME)
-	end
-	
-	
+	end	
 	
 	switch order
 		case 1
@@ -41,7 +29,7 @@ function laplacian = laplacian2(nx,ny,hx,hy,order,posneg,bcpar)
 	
 	Dxx = posneg*kron(speye(ny),dx2);
 	Dyy = posneg*kron(dy2,speye(nx));
-	if(exist('bcpar','var') && ~isempty(a11x))
+	if(exist('bcpar','var'))
 		Dxx(spdiag(bcpar.we.inds)) = -posneg*bcpar.we.a11.x;
 		Dyy(spdiag(bcpar.we.inds)) = -posneg*bcpar.we.a11.y;
 
