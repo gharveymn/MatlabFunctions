@@ -35,9 +35,22 @@ function laplacian = laplacian2(nx,ny,hx,hy,order,posneg,bcpar)
 
 		Dxx(spdiag(bcpar.sn.inds)) = -posneg*bcpar.sn.a11.x;
 		Dyy(spdiag(bcpar.sn.inds)) = -posneg*bcpar.sn.a11.y;
+		
+		Dxx(spdiag(bcpar.sn.inds&bcpar.we.inds)) = -posneg*min(bcpar.sn.a11.x,bcpar.we.a11.x);
+		Dyy(spdiag(bcpar.sn.inds&bcpar.we.inds)) = -posneg*min(bcpar.sn.a11.y,bcpar.we.a11.y);
 
 		Dxx(spdiag(bcpar.io.inds)) = -posneg*bcpar.io.a11.x;
 		Dyy(spdiag(bcpar.io.inds)) = -posneg*bcpar.io.a11.y;
+		
+		Dxx(spdiag(bcpar.io.inds&bcpar.we.inds)) = -posneg*min(bcpar.io.a11.x,bcpar.we.a11.x);
+		Dyy(spdiag(bcpar.io.inds&bcpar.we.inds)) = -posneg*min(bcpar.io.a11.y,bcpar.we.a11.y);
+		
+		Dxx(spdiag(bcpar.io.inds&bcpar.sn.inds)) = -posneg*min(bcpar.io.a11.x,bcpar.sn.a11.x);
+		Dyy(spdiag(bcpar.io.inds&bcpar.sn.inds)) = -posneg*min(bcpar.io.a11.y,bcpar.sn.a11.y);
+		
+		Dxx(spdiag(bcpar.io.inds&bcpar.sn.inds&bcpar.we.inds)) = -posneg*min([bcpar.io.a11.x,bcpar.sn.a11.x,bcpar.we.a11.x]);
+		Dyy(spdiag(bcpar.io.inds&bcpar.sn.inds&bcpar.we.inds)) = -posneg*min([bcpar.io.a11.y,bcpar.sn.a11.y,bcpar.we.a11.y]);
+		
 	end
 	
 	laplacian = Dxx/hx^2+Dyy/hy^2;

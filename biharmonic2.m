@@ -1,12 +1,12 @@
-function bih = biharmonic2(nx,ny,h,bcxd,bcyd,bcxn,bcyn,posneg)
+function bih = biharmonic2(nx,ny,hx,hy,bcxd,bcyd,bcxn,bcyn,posneg)
 	%BIHARMONIC makes a sparse discrete biharmonic operator in 2 dimensions
 	%nx		number of x values in the grid
 	%ny		number of y values in the grid
 	%h		the consistence difference between grids
-	Dxx = sptoeplitz([-2 1],nx)./h.^2;
-	Dyy = sptoeplitz([-2 1],ny)./h.^2;
-	Cx = sparse([1,nx],[1,nx],[(2/h^4),(2/h^4)],nx,nx);
-	Cy = sparse([1,ny],[1,ny],[(2/h^4),(2/h^4)],ny,ny);
+	Dxx = sptoeplitz([-2 1],nx)./hx.^2;
+	Dyy = sptoeplitz([-2 1],ny)./hy.^2;
+	Cx = sparse([1,nx],[1,nx],[(2/hx^4),(2/hx^4)],nx,nx);
+	Cy = sparse([1,ny],[1,ny],[(2/hy^4),(2/hy^4)],ny,ny);
 	
 	if(exist('posneg','var') && posneg == -1)
 		Dx4 = -(kron(speye(ny),Dxx^2) + kron(speye(ny),Cx));
@@ -41,7 +41,7 @@ function bih = biharmonic2(nx,ny,h,bcxd,bcyd,bcxn,bcyn,posneg)
 	end
 	
 	if(boolbcxn)
-		Dx = sptoeplitz([0 -1],[0 1],nx)./(2*h);
+		Dx = sptoeplitz([0 -1],[0 1],nx)./(2*hx);
 		dx = kron(speye(ny),Dx);
 		dx = spdiag(bcxn)*dx;
 		
@@ -51,7 +51,7 @@ function bih = biharmonic2(nx,ny,h,bcxd,bcyd,bcxn,bcyn,posneg)
 	end
 	
 	if(boolbcyn)
-		Dy = sptoeplitz([0 -1],[0 1],ny)./(2*h);
+		Dy = sptoeplitz([0 -1],[0 1],ny)./(2*hy);
 		dy = kron(Dy,speye(nx));
 		dy = spdiag(bcyn)*dy;
 		
