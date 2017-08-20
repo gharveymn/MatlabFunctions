@@ -1,5 +1,5 @@
 function B = mvgavg(A,k)
-	%MVGAVG takes the first order movibng average along the specified dimension
+	%MVGAVG takes the first order moving average along the specified dimension
 	%k defaults to 1
 	
 	if(nargin == 1)
