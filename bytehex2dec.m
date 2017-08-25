@@ -11,7 +11,7 @@ function out = bytehex2dec(varargin)
 		ME = MException('bytehex2dec:invalidParameterException','the length of the input string must be even');
 		throw(ME)
 	end
-	blks = repmat({[0,1;1,0]},1,n/2);
+	blks = repmat({sparse([1;2],[2;1],[1;1])},1,n/2);
 	P = blkdiag(blks{:});
 	pdeci = P*(deci);
 	out = sum(pdeci.*(arrayfun(@(i) 16^i, (0:n-1)')));
