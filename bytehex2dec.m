@@ -1,5 +1,5 @@
 function out = bytehex2dec(varargin)
-	%BYTEHEXTODEC converts byte-hex to decimal
+	%BYTEHEX2DEC converts byte-hex to decimal
 	% that is, hex in the form of 
 	% 13 7F 9A 21 = (219A7F13)_16 = (563773203)_10
 	
