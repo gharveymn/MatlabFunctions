@@ -1,7 +1,7 @@
-function out = bytehex2dec(varargin)
-	%BYTEHEX2DEC converts byte-hex to decimal
+function out = byte2hex(varargin)
+	%BYTE2HEX Converts byte-hex to hex (rearranges the digits)
 	% that is, hex in the form of 
-	% 13 7F 9A 21 = (219A7F13)_16 = (563773203)_10
+	% 13 7F 9A 21 = (219A7F13)_16
 	
 	in = horzcat(varargin{:});
 	in = replace(in," ","");
@@ -12,9 +12,9 @@ function out = bytehex2dec(varargin)
 		throw(ME)
 	end
 	blks = repmat({sparse([1;2],[2;1],[1;1])},1,n/2);
-	P = blkdiag(blks{:});
+	P = fliplr(blkdiag(blks{:}));
 	pdeci = P*deci;
-	out = sum(pdeci.*(arrayfun(@(i) 16^i, (0:n-1)')));
+	out = dec2hex(pdeci)';
 	
 end
 
